@@ -1,3 +1,8 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
+val mapboxKey: String = gradleLocalProperties(rootDir).getProperty("mapboxKey")
+val ocKey: String = gradleLocalProperties(rootDir).getProperty("ocKey")
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -13,6 +18,7 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+        //android.buildFeatures.buildConfig = true
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -22,11 +28,18 @@ android {
 
     buildTypes {
         release {
+            buildConfigField("String", "mapboxKey", mapboxKey)
+            buildConfigField("String", "ocKey", ocKey)
+
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            buildConfigField("String", "mapboxKey", mapboxKey)
+            buildConfigField("String", "ocKey", ocKey)
         }
     }
     compileOptions {
@@ -38,6 +51,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -59,6 +73,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.navigation:navigation-compose:2.7.7")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -67,4 +82,15 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    /*implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.js)
+    implementation(libs.ktor.client.contentNegotiation)
+    implementation(libs.ktor.client.webSockets)
+    implementation(libs.ktor.serialization.json)
+
+    implementation(npm("mapbox-gl", libs.versions.mapboxGl.get()))*/
+    //implementation("ca.derekellis.reroute", "ca.derekellis.kgtfs","gtfs")
+    implementation("org.mobilitydata","gtfs-realtime-bindings","0.0.8")
 }
+

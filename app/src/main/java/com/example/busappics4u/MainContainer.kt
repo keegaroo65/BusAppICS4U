@@ -1,20 +1,12 @@
-package com.example.transactions
+package com.example.busappics4u
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
@@ -47,7 +39,7 @@ fun MainContainer() {
                 ),
                 title = {
                     Text(
-                        text = "Budgeting Tool <3",
+                        text = "Bus Tool <3",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center,
@@ -77,12 +69,6 @@ fun MainContainer() {
                 route = NAV_SETTINGS
             ) {
                 Settings()
-            }
-
-            composable(
-                route = NAV_HOME + "/newTransaction"
-            ) {
-                NewTransaction(navController)
             }
         }
     }
