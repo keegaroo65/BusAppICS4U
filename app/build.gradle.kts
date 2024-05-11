@@ -92,5 +92,23 @@ dependencies {
     implementation(npm("mapbox-gl", libs.versions.mapboxGl.get()))*/
     //implementation("ca.derekellis.reroute", "ca.derekellis.kgtfs","gtfs")
     implementation("org.mobilitydata","gtfs-realtime-bindings","0.0.8")
+
+    // for kgtfs
+    /*api(libs.exposed.core)
+
+    implementation(libs.okhttp)
+    implementation(libs.bundles.ktor.client)
+    implementation(libs.bundles.sqldelight)
+    implementation(libs.csv)
+
+    implementation(libs.exposed.core)
+    implementation(libs.exposed.javaTime)
+    implementation(libs.exposed.jdbc)
+
+    api(libs.spatialk.turf)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.truth)
+    testImplementation(libs.kotlinx.coroutines.test)*/
 }
 
