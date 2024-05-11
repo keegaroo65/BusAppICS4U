@@ -94,7 +94,7 @@ dependencies {
     implementation("org.mobilitydata","gtfs-realtime-bindings","0.0.8")
 
     // for kgtfs
-    /*api(libs.exposed.core)
+    api(libs.exposed.core)
 
     implementation(libs.okhttp)
     implementation(libs.bundles.ktor.client)
@@ -109,6 +109,6 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(libs.truth)
-    testImplementation(libs.kotlinx.coroutines.test)*/
+    testImplementation(libs.kotlinx.coroutines.test)
 }
 
