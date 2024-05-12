@@ -14,6 +14,7 @@ import kotlin.io.path.pathString
 public class GtfsDb private constructor(public val path: String) {
   private val database = Database.connect("jdbc:sqlite:$path")
 
+
   @ExperimentalKgtfsApi
   @GtfsDsl
   public fun <T> query(logger: SqlLogger? = null, statement: GtfsDbScope.() -> T): T = transaction(database) {

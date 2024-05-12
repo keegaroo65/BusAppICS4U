@@ -2,6 +2,8 @@ package com.example.busappics4u
 
 import android.content.Context
 import android.util.Log
+import ca.derekellis.kgtfs.GtfsDb
+import ca.derekellis.kgtfs.io.GtfsReader
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -12,10 +14,16 @@ import java.io.IOException
 import java.io.InputStream
 import java.util.zip.ZipFile
 
+private const val TAG = "FileHandler"
+
 class FileHandler {
     companion object {
+        lateinit var database: GtfsDb
+            private set
+
         private const val GTFS_STATIC_PATH = "GTFSExport"
         private const val GTFS_STATIC_FILE_ZIP = "GTFSExport.zip"
+        private const val GTFS_DB_PATH = "gtfs.db"
 
         private var path: File? = null
 
@@ -30,15 +38,12 @@ class FileHandler {
             if (!gtfsFolder.exists()) {
                 attemptDownloadZip(gtfsFolder)
             }
-            else {
-                Log.i("FileHandler","Folder already present.")
-                // TODO: Extract zip file then use it, hopefully in an efficient way lol. kgtfs? :pray:
-            }
         }
 
         private fun attemptDownloadZip(gtfsFolder: File) {
             GlobalScope.launch {
                 async{
+                    // Download zip file from OC Transpo
                     val gtfsZip = File(path, GTFS_STATIC_FILE_ZIP)
 
                     if (!gtfsZip.exists()) {
@@ -50,9 +55,27 @@ class FileHandler {
                         Log.i("FileHandler", "Zip file finished: $result")
                     }
 
-                    Log.i("FileHandler","attempting UNzip")
-                    unzip(gtfsZip, gtfsFolder.path)
-                    Log.i("FileHandler","UNzip winning")
+                    // Unzip the zip file into a normal usable directory
+//                    Log.i("FileHandler","attempting UNzip")
+//                    unzip(gtfsZip, gtfsFolder.path)
+//                    Log.i("FileHandler","UNzip winning")
+
+                    // Use kgtfs to process the zip file into a GtfsDb
+                    val gtfsDbFile = File(path, GTFS_DB_PATH)
+
+                    val pathString = (path?.absolutePath ?: "")
+
+                    database =
+                        if (gtfsDbFile.exists())
+                            GtfsDb.open("$pathString/$GTFS_DB_PATH")
+                        else GtfsDb.fromReader(
+                            GtfsReader.newZipReader(
+                                File("$pathString/$GTFS_STATIC_FILE_ZIP").toPath()
+                            ),
+                            "$pathString/$GTFS_DB_PATH"
+                        )
+
+                    Log.d(TAG, database.toString())
                 }
             }
         }
@@ -111,3 +134,4 @@ class FileHandler {
         private const val BUFFER_SIZE = 4096
     }
 }
+

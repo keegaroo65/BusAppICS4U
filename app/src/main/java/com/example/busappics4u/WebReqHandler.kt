@@ -15,7 +15,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 
-const val TAG = "WebReqHandler"
+private const val TAG = "WebReqHandler"
 
 class WebReqHandler {
     companion object{

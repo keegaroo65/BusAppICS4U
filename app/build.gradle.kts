@@ -63,6 +63,12 @@ android {
     }
 }
 
+configurations.all {
+    resolutionStrategy {
+        force("org.xerial:sqlite-jdbc:3.45.3.0")
+    }
+}
+
 dependencies {
 
     implementation("androidx.core:core-ktx:1.13.0")
@@ -110,5 +116,8 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.truth)
     testImplementation(libs.kotlinx.coroutines.test)
+
+    // bug fix for kgtfs?
+    //implementation("org.xerial","sqlite-jdbc","3.45.3.0")
 }
 
