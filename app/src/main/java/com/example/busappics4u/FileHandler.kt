@@ -1,12 +1,6 @@
 package com.example.busappics4u
 
 import android.content.Context
-import android.util.Log
-import ca.derekellis.kgtfs.GtfsDb
-import ca.derekellis.kgtfs.io.GtfsReader
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -18,9 +12,6 @@ private const val TAG = "FileHandler"
 
 class FileHandler {
     companion object {
-        lateinit var database: GtfsDb
-            private set
-
         private const val GTFS_STATIC_PATH = "GTFSExport"
         private const val GTFS_STATIC_FILE_ZIP = "GTFSExport.zip"
         private const val GTFS_DB_PATH = "gtfs.db"
@@ -30,55 +21,55 @@ class FileHandler {
         fun load(
             context: Context
         ) {
-            // Initialize the path variable for future use
-            path = context.filesDir
-
-            // Initialize the file if it doesn't exist
-            val gtfsFolder = File(path, GTFS_STATIC_PATH)
-            if (!gtfsFolder.exists()) {
-                attemptDownloadZip(gtfsFolder)
-            }
+//            // Initialize the path variable for future use
+//            path = context.filesDir
+//
+//            // Initialize the file if it doesn't exist
+//            val gtfsFolder = File(path, GTFS_STATIC_PATH)
+//            if (!gtfsFolder.exists()) {
+//                attemptDownloadZip(gtfsFolder)
+//            }
         }
 
-        private fun attemptDownloadZip(gtfsFolder: File) {
-            GlobalScope.launch {
-                async{
-                    // Download zip file from OC Transpo
-                    val gtfsZip = File(path, GTFS_STATIC_FILE_ZIP)
-
-                    if (!gtfsZip.exists()) {
-                        Log.i("FileHandler","Attempting to install zip")
-                        val result = WebReqHandler.downloadFile(
-                            WebReqHandler.GTFS_STATIC_URL,
-                            gtfsZip
-                        )
-                        Log.i("FileHandler", "Zip file finished: $result")
-                    }
-
-                    // Unzip the zip file into a normal usable directory
-//                    Log.i("FileHandler","attempting UNzip")
-//                    unzip(gtfsZip, gtfsFolder.path)
-//                    Log.i("FileHandler","UNzip winning")
-
-                    // Use kgtfs to process the zip file into a GtfsDb
-                    val gtfsDbFile = File(path, GTFS_DB_PATH)
-
-                    val pathString = (path?.absolutePath ?: "")
-
-                    database =
-                        if (gtfsDbFile.exists())
-                            GtfsDb.open("$pathString/$GTFS_DB_PATH")
-                        else GtfsDb.fromReader(
-                            GtfsReader.newZipReader(
-                                File("$pathString/$GTFS_STATIC_FILE_ZIP").toPath()
-                            ),
-                            "$pathString/$GTFS_DB_PATH"
-                        )
-
-                    Log.d(TAG, database.toString())
-                }
-            }
-        }
+//        private fun attemptDownloadZip(gtfsFolder: File) {
+//            GlobalScope.launch {
+//                async{
+//                    // Download zip file from OC Transpo
+//                    val gtfsZip = File(path, GTFS_STATIC_FILE_ZIP)
+//
+//                    if (!gtfsZip.exists()) {
+//                        Log.i("FileHandler","Attempting to install zip")
+//                        val result = WebReqHandler.downloadFile(
+//                            WebReqHandler.GTFS_STATIC_URL,
+//                            gtfsZip
+//                        )
+//                        Log.i("FileHandler", "Zip file finished: $result")
+//                    }
+//
+//                    // Unzip the zip file into a normal usable directory
+////                    Log.i("FileHandler","attempting UNzip")
+////                    unzip(gtfsZip, gtfsFolder.path)
+////                    Log.i("FileHandler","UNzip winning")
+//
+//                    // Use kgtfs to process the zip file into a GtfsDb
+//                    val gtfsDbFile = File(path, GTFS_DB_PATH)
+//
+//                    val pathString = (path?.absolutePath ?: "")
+//
+////                    database =
+////                        if (gtfsDbFile.exists())
+////                            GtfsDb.open("$pathString/$GTFS_DB_PATH")
+////                        else GtfsDb.fromReader(
+////                            GtfsReader.newZipReader(
+////                                File("$pathString/$GTFS_STATIC_FILE_ZIP").toPath()
+////                            ),
+////                            "$pathString/$GTFS_DB_PATH"
+////                        )
+////
+////                    Log.d(TAG, database.toString())
+//                }
+//            }
+//        }
 
         /**
          * @param zipFilePath

@@ -63,14 +63,8 @@ android {
     }
 }
 
-configurations.all {
-    resolutionStrategy {
-        force("org.xerial:sqlite-jdbc:3.45.3.0")
-    }
-}
-
 dependencies {
-
+    // Android dependencies
     implementation("androidx.core:core-ktx:1.13.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.9.0")
@@ -81,7 +75,6 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.navigation:navigation-compose:2.7.7")
-    testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
@@ -89,35 +82,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    /*implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.js)
-    implementation(libs.ktor.client.contentNegotiation)
-    implementation(libs.ktor.client.webSockets)
-    implementation(libs.ktor.serialization.json)
-
-    implementation(npm("mapbox-gl", libs.versions.mapboxGl.get()))*/
-    //implementation("ca.derekellis.reroute", "ca.derekellis.kgtfs","gtfs")
+    // External dependencies
     implementation("org.mobilitydata","gtfs-realtime-bindings","0.0.8")
-
-    // for kgtfs
-    api(libs.exposed.core)
-
-    implementation(libs.okhttp)
-    implementation(libs.bundles.ktor.client)
-    implementation(libs.bundles.sqldelight)
-    implementation(libs.csv)
-
-    implementation(libs.exposed.core)
-    implementation(libs.exposed.javaTime)
-    implementation(libs.exposed.jdbc)
-
-    api(libs.spatialk.turf)
-
-    testImplementation(libs.junit)
-    testImplementation(libs.truth)
-    testImplementation(libs.kotlinx.coroutines.test)
-
-    // bug fix for kgtfs?
-    //implementation("org.xerial","sqlite-jdbc","3.45.3.0")
+    testImplementation("junit:junit:4.13.2")
 }
-

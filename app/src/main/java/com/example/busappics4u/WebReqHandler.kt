@@ -19,8 +19,10 @@ private const val TAG = "WebReqHandler"
 
 class WebReqHandler {
     companion object{
-        const val GTFS_STATIC_URL = "https://oct-gtfs-emasagcnfmcgeham.z01.azurefd.net/public-access/GTFSExport.zip"
+        const val SERVER_URL = "https://busappserver.azurewebsites.net"
         const val GTFS_REALTIME_URL = "https://nextrip-public-api.azure-api.net/octranspo/gtfs-rt-vp/beta/v1/VehiclePositions"
+
+//        const val GTFS_STATIC_URL = "https://oct-gtfs-emasagcnfmcgeham.z01.azurefd.net/public-access/GTFSExport.zip"
 
         suspend fun downloadFile(url: String, outputFile: File): Boolean {
             try {
@@ -47,8 +49,58 @@ class WebReqHandler {
             }
         }
 
+        fun getTripInfo(
+            tripId: String
+        ): String {
+            val url = URL("$SERVER_URL/trip/$tripId")
+
+//            with(url.openConnection() as HttpURLConnection) {
+//                requestMethod = "GET"  // optional default is GET
+//
+//                println("\nSent 'GET' request to URL : $url; Response Code : $responseCode")
+//
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                    inputStream.bufferedReader().use {
+//                        it.lines().forEach { line ->
+//                            println(line)
+//                        }
+//                    }
+//                } else {
+//                    val reader: BufferedReader = inputStream.bufferedReader()
+//                    var line: String? = reader.readLine()
+//                    while (line != null) {
+//                        System.out.println(line)
+//                        line = reader.readLine()
+//                    }
+//                    reader.close()
+//                }
+//            }
+
+            val tripInfo = url.readText()
+
+            Log.d(TAG, "Feed: $tripInfo")
+
+            return tripInfo
+        }
+
+        fun getTripDetail(
+            tripId: String,
+            detail: String
+        ) {
+
+        }
+
+        fun getTripHeadsign(
+            tripId: String
+        ) {
+
+        }
+
         @Throws(Exception::class)
-        fun test() {
+        fun test(
+            id: String,
+            callback: (String) -> Unit
+        ) {
             GlobalScope.launch {
                 async {
                     val url = URL(GTFS_REALTIME_URL)
@@ -67,13 +119,29 @@ class WebReqHandler {
                     val feed = FeedMessage.parseFrom(conn.inputStream)
                     //Log.d(TAG, feed.toString())
 
+                    var found = false
+                    var routeId: String = "0"
+                    var tripId: String = "0"
+
                     for (entity in feed.entityList) {
                         if (entity.hasVehicle()) {
-                            if (entity.vehicle.vehicle.id == "6508") {
-                                Log.d(TAG,"6508 is currently running route ${entity.vehicle.trip.routeId} ${entity.vehicle.trip.tripId}")
+                            if (entity.vehicle.vehicle.id == id) {
+                                found = true
+                                routeId = entity.vehicle.trip.routeId
+                                tripId = entity.vehicle.trip.tripId//"${entity.vehicle.trip.routeId} (${entity.vehicle.trip.tripId})"
+                                //Log.d(TAG,"$id is currently running route $result")
                             }
                         }
                     }
+
+                    if (!found) {
+                        Log.d(TAG, "Bus $id was not found :(")
+                    }
+
+//                    val tripInfo = getTripInfo(tripId)
+//
+//                    callback(tripInfo)
+                    callback(tripId)
                 }
             }
         }
