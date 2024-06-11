@@ -13,7 +13,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,8 +25,8 @@ import androidx.navigation.NavController
 fun Home(
     navController: NavController
 ) {
-    var idState by remember { mutableStateOf("") }
-    var tripId by remember { mutableStateOf("") }
+    var idState by rememberSaveable { mutableStateOf("") }
+    var tripId by rememberSaveable { mutableStateOf("trip info here") }
 
     Card(
         modifier = Modifier
@@ -45,11 +45,14 @@ fun Home(
                     idState = it
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                placeholder = { Text("Bus id (eg. 4810)") }
             )
 
             Button(
                 modifier = Modifier,
                 onClick = {
+                    tripId = "loading..."
+
                     WebReqHandler.test(
                         idState
                     ) {
@@ -64,7 +67,7 @@ fun Home(
             }
 
             Text(
-                text = "tripId: $tripId"
+                text = tripId
             )
         }
     }

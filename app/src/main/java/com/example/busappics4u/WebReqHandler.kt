@@ -5,6 +5,7 @@ import com.google.transit.realtime.GtfsRealtime.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.io.File
@@ -19,7 +20,7 @@ private const val TAG = "WebReqHandler"
 
 class WebReqHandler {
     companion object{
-        const val SERVER_URL = "https://busappserver.azurewebsites.net"
+        const val SERVER_URL = "https://busappserver-u74vjrgwzq-nn.a.run.app"
         const val GTFS_REALTIME_URL = "https://nextrip-public-api.azure-api.net/octranspo/gtfs-rt-vp/beta/v1/VehiclePositions"
 
 //        const val GTFS_STATIC_URL = "https://oct-gtfs-emasagcnfmcgeham.z01.azurefd.net/public-access/GTFSExport.zip"
@@ -51,36 +52,33 @@ class WebReqHandler {
 
         fun getTripInfo(
             tripId: String
-        ): String {
+        ): JSONObject {
             val url = URL("$SERVER_URL/trip/$tripId")
 
-//            with(url.openConnection() as HttpURLConnection) {
-//                requestMethod = "GET"  // optional default is GET
-//
-//                println("\nSent 'GET' request to URL : $url; Response Code : $responseCode")
-//
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//                    inputStream.bufferedReader().use {
-//                        it.lines().forEach { line ->
-//                            println(line)
-//                        }
-//                    }
-//                } else {
-//                    val reader: BufferedReader = inputStream.bufferedReader()
-//                    var line: String? = reader.readLine()
-//                    while (line != null) {
-//                        System.out.println(line)
-//                        line = reader.readLine()
-//                    }
-//                    reader.close()
-//                }
-//            }
+            with(url.openConnection() as HttpURLConnection) {
+                requestMethod = "GET"  // optional default is GET
+
+                println("\nSent 'GET' request to URL : $url; Response Code : $responseCode")
+
+                inputStream.bufferedReader().use {
+                    it.lines().forEach { line ->
+                        println(line)
+                    }
+                }
+            }
 
             val tripInfo = url.readText()
 
             Log.d(TAG, "Feed: $tripInfo")
 
-            return tripInfo
+            if (!tripInfo.matches(Regex("""\{.+\}"""))) {
+                Log.d(TAG, "getTripInfo server error:")
+                Log.d(TAG, tripInfo)
+
+                return JSONObject("{}")
+            }
+
+            return JSONObject(tripInfo)
         }
 
         fun getTripDetail(
@@ -119,29 +117,44 @@ class WebReqHandler {
                     val feed = FeedMessage.parseFrom(conn.inputStream)
                     //Log.d(TAG, feed.toString())
 
-                    var found = false
-                    var routeId: String = "0"
-                    var tripId: String = "0"
+                    var routeId: String = ""
+                    var tripId: String = ""
+                    var entity: FeedEntity = FeedEntity.getDefaultInstance()
 
-                    for (entity in feed.entityList) {
-                        if (entity.hasVehicle()) {
-                            if (entity.vehicle.vehicle.id == id) {
-                                found = true
-                                routeId = entity.vehicle.trip.routeId
-                                tripId = entity.vehicle.trip.tripId//"${entity.vehicle.trip.routeId} (${entity.vehicle.trip.tripId})"
+                    for (_entity in feed.entityList) {
+                        if (_entity.hasVehicle()) {
+                            if (_entity.vehicle.vehicle.id == id) {
+                                routeId = _entity.vehicle.trip.routeId
+                                tripId = _entity.vehicle.trip.tripId
+                                entity = _entity
+                            //"${entity.vehicle.trip.routeId} (${entity.vehicle.trip.tripId})"
                                 //Log.d(TAG,"$id is currently running route $result")
                             }
                         }
                     }
 
-                    if (!found) {
+                    if (tripId == "") {
                         Log.d(TAG, "Bus $id was not found :(")
+                        callback("Bus was not found")
+
+                        if (entity != FeedEntity.getDefaultInstance()) {
+                            Log.d(TAG, entity.toString())
+                        }
+
+                        return@async
                     }
 
-//                    val tripInfo = getTripInfo(tripId)
-//
-//                    callback(tripInfo)
-                    callback(tripId)
+                    Log.d(TAG, "routeId $routeId")
+                    Log.d(TAG, "tripId $tripId")
+                    val tripInfo = getTripInfo(tripId)
+
+                    if (!tripInfo.has("route_id")) {
+                        callback("Server error $tripInfo")
+                        return@async
+                    }
+
+                    callback("${tripInfo.get("route_id")} ${tripInfo.get("trip_headsign")}")
+//                    callback(tripId)
                 }
             }
         }
