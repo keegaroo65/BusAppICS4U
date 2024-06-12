@@ -1,4 +1,4 @@
-package com.example.busappics4u
+package com.example.busappics4u.ui.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,22 +11,22 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.busappics4u.data.WebReqHandler
+import com.example.busappics4u.ui.AppViewModelProvider
 
 @Composable
 fun Home(
-    navController: NavController
+    navController: NavController,
+    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    var idState by rememberSaveable { mutableStateOf("") }
-    var tripId by rememberSaveable { mutableStateOf("trip info here") }
+    val uiState = viewModel.uiState.collectAsState().value
 
     Card(
         modifier = Modifier
@@ -40,10 +40,8 @@ fun Home(
             verticalArrangement = Arrangement.SpaceEvenly,
         ) {
             TextField(
-                value = idState,
-                onValueChange = {
-                    idState = it
-                },
+                value = uiState.inputText,
+                onValueChange = { viewModel.input(it) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 placeholder = { Text("Bus id (eg. 4810)") }
             )
@@ -51,12 +49,12 @@ fun Home(
             Button(
                 modifier = Modifier,
                 onClick = {
-                    tripId = "loading..."
+                    viewModel.output("loading...")
 
                     WebReqHandler.test(
-                        idState
+                        uiState.inputText
                     ) {
-                        tripId = it
+                        viewModel.output(it)
                     }
                 }
             ) {
@@ -67,7 +65,7 @@ fun Home(
             }
 
             Text(
-                text = tripId
+                text = uiState.outputText
             )
         }
     }

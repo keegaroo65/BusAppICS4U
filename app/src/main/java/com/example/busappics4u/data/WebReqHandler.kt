@@ -1,7 +1,8 @@
-package com.example.busappics4u
+package com.example.busappics4u.data
 
 import android.util.Log
-import com.google.transit.realtime.GtfsRealtime.*
+import com.example.busappics4u.BuildConfig
+import com.google.transit.realtime.GtfsRealtime
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -14,7 +15,6 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
-
 
 private const val TAG = "WebReqHandler"
 
@@ -114,12 +114,13 @@ class WebReqHandler {
                         BuildConfig.ocKey
                     )
 
-                    val feed = FeedMessage.parseFrom(conn.inputStream)
+                    val feed = GtfsRealtime.FeedMessage.parseFrom(conn.inputStream)
                     //Log.d(TAG, feed.toString())
 
                     var routeId: String = ""
                     var tripId: String = ""
-                    var entity: FeedEntity = FeedEntity.getDefaultInstance()
+                    var entity: GtfsRealtime.FeedEntity =
+                        GtfsRealtime.FeedEntity.getDefaultInstance()
 
                     for (_entity in feed.entityList) {
                         if (_entity.hasVehicle()) {
@@ -137,7 +138,7 @@ class WebReqHandler {
                         Log.d(TAG, "Bus $id was not found :(")
                         callback("Bus was not found")
 
-                        if (entity != FeedEntity.getDefaultInstance()) {
+                        if (entity != GtfsRealtime.FeedEntity.getDefaultInstance()) {
                             Log.d(TAG, entity.toString())
                         }
 
@@ -146,14 +147,16 @@ class WebReqHandler {
 
                     Log.d(TAG, "routeId $routeId")
                     Log.d(TAG, "tripId $tripId")
-                    val tripInfo = getTripInfo(tripId)
+                    //val tripInfo = getTripInfo(tripId)
 
-                    if (!tripInfo.has("route_id")) {
+                    callback("This bus is running route $routeId")
+
+                    /*if (!tripInfo.has("route_id")) {
                         callback("Server error $tripInfo")
                         return@async
                     }
 
-                    callback("${tripInfo.get("route_id")} ${tripInfo.get("trip_headsign")}")
+                    callback("${tripInfo.get("route_id")} ${tripInfo.get("trip_headsign")}")*/
 //                    callback(tripId)
                 }
             }

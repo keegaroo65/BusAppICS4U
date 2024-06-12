@@ -1,6 +1,7 @@
-package com.example.busappics4u
+package com.example.busappics4u.data
 
 import android.content.Context
+import android.location.Location
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -16,11 +17,15 @@ class FileHandler {
         private const val GTFS_STATIC_FILE_ZIP = "GTFSExport.zip"
         private const val GTFS_DB_PATH = "gtfs.db"
 
+        public val OTTAWA_LOC = Location("")
+
         private var path: File? = null
 
         fun load(
             context: Context
         ) {
+            OTTAWA_LOC.latitude = 45.420100
+            OTTAWA_LOC.longitude = 75.700300
 //            // Initialize the path variable for future use
 //            path = context.filesDir
 //
