@@ -22,6 +22,9 @@ interface TripDao {
     @Query("SELECT * from trips WHERE id = :id")
     fun getTrip(id: Int): Flow<Trip>
 
-    @Query("SELECT * from trips ORDER BY start_timestamp ASC")
+    @Query("SELECT * from trips WHERE route_id != 0 ORDER BY start_timestamp ASC")
     fun getAllTrips(): Flow<List<Trip>>
+
+    @Query("SELECT * from trips WHERE route_id != 0 ORDER BY start_timestamp ASC LIMIT :limit")
+    fun getAllTrips(limit: Int): Flow<List<Trip>>
 }

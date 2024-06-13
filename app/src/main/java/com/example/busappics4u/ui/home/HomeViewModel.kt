@@ -1,12 +1,15 @@
 package com.example.busappics4u.ui.home
 
 import androidx.lifecycle.ViewModel
+import com.example.busappics4u.BusViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class HomeViewModel: ViewModel() {
+class HomeViewModel(
+    busViewModel: BusViewModel
+): ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 

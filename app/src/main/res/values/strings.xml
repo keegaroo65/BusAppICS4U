@@ -4,6 +4,8 @@
     <string name="homeRoute">home</string>
     <string name="historyRoute">history</string>
     <string name="settingsRoute">settings</string>
+    <string name="tripRoute">trip</string>
+    <string name="tripDetailRoute">trip/{id}</string>
 
 
     <string name="homeTitle">Home</string>

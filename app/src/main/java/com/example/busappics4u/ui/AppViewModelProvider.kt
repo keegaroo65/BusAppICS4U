@@ -1,14 +1,9 @@
 package com.example.busappics4u.ui
 
-import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.busappics4u.ui.home.HomeViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
-        initializer {
-            HomeViewModel()
-        }
 
 //        // Initializer for ItemEditViewModel
 //        initializer {
@@ -41,5 +36,5 @@ object AppViewModelProvider {
 // * Extension function to queries for [Application] object and returns an instance of
 // * [InventoryApplication].
 // */
-//fun CreationExtras.inventoryApplication(): InventoryApplication =
-//    (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as InventoryApplication)
+//fun CreationExtras.busApplication(): BusApplication =
+//    (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as BusApplication)

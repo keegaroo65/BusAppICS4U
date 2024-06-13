@@ -39,6 +39,17 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+//@Composable
+//fun BATheme(
+//    content: @Composable () -> Unit
+//) {
+//    MaterialTheme(
+//        colorScheme = DarkColorScheme,
+//        typography = Typography,
+//        content = content
+//    )
+//}
+
 @Composable
 fun BusAppICS4UTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

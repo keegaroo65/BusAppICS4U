@@ -9,3 +9,10 @@ val Pink80 = Color(0xFFEFB8C8)
 val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
+
+object ServiceTypeColors {
+    val Rapid = Color(0xFF003D86)
+    val Frequent = Color(0xFFEF5323)
+    val Connexion = Color(0xFFB36A94)
+    val Local = Color(0xFF6D6E70)
+}

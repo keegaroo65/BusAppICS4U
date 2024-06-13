@@ -3,9 +3,11 @@ package com.example.busappics4u.data
 import android.util.Log
 import com.example.busappics4u.BuildConfig
 import com.google.transit.realtime.GtfsRealtime
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.io.DataInputStream
 import java.io.DataOutputStream
@@ -28,7 +30,9 @@ class WebReqHandler {
         suspend fun downloadFile(url: String, outputFile: File): Boolean {
             try {
                 val u = URL(url)
-                val conn = u.openConnection()
+                val conn = withContext(Dispatchers.IO) {
+                    u.openConnection()
+                }
                 val contentLength = conn.contentLength
                 val stream = DataInputStream(u.openStream())
                 val buffer = ByteArray(contentLength)

@@ -13,20 +13,20 @@ data class Trip(
     val startTime: Long,
 
     @ColumnInfo(name = "end_timestamp")
-    val endTime: Long,
+    val endTime: Long = 0,
 
     @ColumnInfo(name = "route_id")
-    val routeId: Int,
+    val routeId: Int = 0,
 
     @ColumnInfo(name = "route_headsign")
-    val routeHeadsign: String,
+    val routeHeadsign: String = "",
 
     @ColumnInfo(name = "bus_id")
-    val busId: String,
+    val busId: Int = 0,
 
     @ColumnInfo(name = "start_stop")
-    val startStop: Int,
+    val startStop: Int = 0,
 
     @ColumnInfo(name = "end_stop")
-    val endStop: Int,
+    val endStop: Int = 0,
 )
