@@ -30,8 +30,8 @@ import kotlinx.coroutines.launch
 fun TripScreen(
     busViewModel: BusViewModel,
 ) {
-    val viewModel = busViewModel.busState.collectAsState().value.tripViewModel
-    val uiState = viewModel.tripState.collectAsState().value
+    val viewModel = busViewModel.appState.collectAsState().value.tripViewModel
+    val uiState = viewModel.uiState.collectAsState().value
 
     Card(
         modifier = Modifier
@@ -75,7 +75,7 @@ fun TripScreen(
 fun TripFields(
     viewModel: TripViewModel
 ) {
-    val uiState = viewModel.tripState.collectAsState().value
+    val uiState = viewModel.uiState.collectAsState().value
 
     TripField(
         "Bus ID",
@@ -119,7 +119,7 @@ fun TripFields(
 fun TripActions(
     viewModel: TripViewModel
 ) {
-    val uiState = viewModel.tripState.collectAsState().value
+    val uiState = viewModel.uiState.collectAsState().value
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -157,6 +157,8 @@ fun TripField(
     onChange: (String) -> Unit
 ) {
     OutlinedTextField(
+        modifier = if (name == "Route Headsign") Modifier
+            else Modifier, // Add autofilling here somehow..
         value = if (_value == "0") "" else _value,
         label = { Text(name) },
         placeholder = { Text(name) },

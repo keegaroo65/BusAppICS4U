@@ -29,4 +29,21 @@ data class Trip(
 
     @ColumnInfo(name = "end_stop")
     val endStop: Int = 0,
-)
+) {
+    // For comparing the content of trips, ignores: id, startTime, and endTime
+    fun equals(other: Trip): Boolean {
+        return this.routeId == other.routeId
+                && this.routeHeadsign == other.routeHeadsign
+                && this.busId == other.busId
+                && this.startStop == other.startStop
+                && this.endStop == other.endStop
+    }
+
+    fun isEmpty(): Boolean {
+        return this.equals(defaultTrip)
+    }
+
+    companion object {
+        val defaultTrip = Trip(startTime = 0L)
+    }
+}

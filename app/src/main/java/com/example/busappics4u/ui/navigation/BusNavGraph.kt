@@ -3,6 +3,7 @@ package com.example.busappics4u.ui.navigation
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
@@ -29,6 +30,8 @@ fun BusNavGraph(
     val NAV_TRIP = stringResource(R.string.tripRoute)
     val NAV_TRIP_DETAIL = stringResource(R.string.tripDetailRoute)
 
+    val tripsRepository = busViewModel.mainActivity.container.tripsRepository
+
     NavHost(
         modifier = Modifier.padding(innerPadding),
         navController = navController,
@@ -43,7 +46,12 @@ fun BusNavGraph(
         composable(
             route = NAV_HISTORY
         ) {
-            HistoryScreen(busViewModel)
+            val historyViewModel = busViewModel.appState.collectAsState().value.historyViewModel
+            val historyViewState = historyViewModel.uiState.collectAsState()
+
+            HistoryScreen(
+                historyViewState.value
+            ) { busViewModel.tripDetails(it) }
         }
 
         composable(
@@ -61,7 +69,13 @@ fun BusNavGraph(
         composable(
             route = NAV_TRIP_DETAIL
         ) {
-            TripDetailScreen(busViewModel, (it.arguments?.getString("id") ?: "0").toInt())
+            val tripDetailViewModel = busViewModel.appState.collectAsState().value.tripDetailViewModel
+            val tripDetailViewState = tripDetailViewModel.uiState.collectAsState().value
+            TripDetailScreen(
+                tripsRepository,
+                (it.arguments?.getString("id") ?: "0").toInt(),
+                tripDetailViewState
+            )
         }
     }
 }

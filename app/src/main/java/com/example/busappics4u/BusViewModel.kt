@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import com.example.busappics4u.data.Trip
 import com.example.busappics4u.ui.history.HistoryViewModel
 import com.example.busappics4u.ui.home.HomeViewModel
+import com.example.busappics4u.ui.trip.TripDetailViewModel
 import com.example.busappics4u.ui.trip.TripViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,20 +16,23 @@ class BusViewModel(
 ) : ViewModel() {
     val mainActivity = _mainActivity
 
-    private val _busState = MutableStateFlow(
+    private val _appState = MutableStateFlow(
         BusUiState(
             TripViewModel(this),
+            TripDetailViewModel(
+                mainActivity.container.tripsRepository, 0
+            ),
             HomeViewModel(this),
             HistoryViewModel(this)
         )
     )
-    val busState = _busState.asStateFlow()
+    val appState = _appState.asStateFlow()
 
     val navController = _navController
 
     fun trip() {
-        if (!_busState.value.tripViewModel.tripState.value.tripActive) {
-            _busState.value.tripViewModel.startTrip()
+        if (!_appState.value.tripViewModel.uiState.value.tripActive) {
+            _appState.value.tripViewModel.startTrip()
         }
         navController.navigate("trip")
     }
@@ -40,12 +44,7 @@ class BusViewModel(
 
 data class BusUiState(
     val tripViewModel: TripViewModel,
+    val tripDetailViewModel: TripDetailViewModel,
     val homeViewModel: HomeViewModel,
     val historyViewModel: HistoryViewModel
 )
-
-enum class TripStatus {
-    None,
-    Active,
-    Cancelled
-}

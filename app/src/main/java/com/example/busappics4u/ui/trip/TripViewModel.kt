@@ -14,8 +14,8 @@ private const val TAG = "TripViewModel.kt"
 class TripViewModel(
     val busViewModel: BusViewModel
 ): ViewModel() {
-    private val _tripState = MutableStateFlow(TripState())
-    val tripState = _tripState.asStateFlow()
+    private val _uiState = MutableStateFlow(TripState())
+    val uiState = _uiState.asStateFlow()
 
     val tripsRepository = busViewModel.mainActivity.container.tripsRepository
 
@@ -46,30 +46,33 @@ class TripViewModel(
 
     // Trip actions
     fun startTrip() {
-        _tripState.value = TripState(tripActive = true)
+        _uiState.value = TripState(tripActive = true)
     }
 
     suspend fun endTrip() {
+        Log.d(TAG, "endTrip()")
         updateTripActive(false)
 
         busViewModel.navController.popBackStack()
 
         updateEndTime(Utility.time())
 
-        tripsRepository.insertTrip(_tripState.value.trip)
-        Log.d(TAG, "endTrip()")
+        val trip = _uiState.value.trip
+        if (!trip.isEmpty()) {
+            tripsRepository.insertTrip(trip)
+        }
     }
 
     fun abortTrip() {
+        Log.d(TAG, "cancelTrip()")
         updateTripActive(false)
 
         busViewModel.navController.popBackStack()
-        Log.d(TAG, "cancelTrip()")
     }
 
     // Trip detail updating methods (operate directly with trip state)
     fun updateBusId(_busId: Int) {
-        _tripState.update { currentState ->
+        _uiState.update { currentState ->
             currentState.copy(
                 trip = currentState.trip.copy(
                     busId = _busId
@@ -79,7 +82,7 @@ class TripViewModel(
     }
 
     fun updateRouteId(_routeId: Int) {
-        _tripState.update { currentState ->
+        _uiState.update { currentState ->
             currentState.copy(
                 trip = currentState.trip.copy(
                     routeId = _routeId
@@ -89,7 +92,7 @@ class TripViewModel(
     }
 
     fun updateEndTime(_endTime: Long) {
-        _tripState.update { currentState ->
+        _uiState.update { currentState ->
             currentState.copy(
                 trip = currentState.trip.copy(
                     endTime = _endTime
@@ -99,7 +102,7 @@ class TripViewModel(
     }
 
     fun updateRouteHeadsign(_routeHeadsign: String) {
-        _tripState.update { currentState ->
+        _uiState.update { currentState ->
             currentState.copy(
                 trip = currentState.trip.copy(
                     routeHeadsign = _routeHeadsign
@@ -109,7 +112,7 @@ class TripViewModel(
     }
 
     fun updateStartStopId(_startStop: Int) {
-        _tripState.update { currentState ->
+        _uiState.update { currentState ->
             currentState.copy(
                 trip = currentState.trip.copy(
                     startStop = _startStop
@@ -119,7 +122,7 @@ class TripViewModel(
     }
 
     fun updateEndStopId(_endStop: Int) {
-        _tripState.update { currentState ->
+        _uiState.update { currentState ->
             currentState.copy(
                 trip = currentState.trip.copy(
                     endStop = _endStop
@@ -129,7 +132,7 @@ class TripViewModel(
     }
 
     fun updatePromptCancel(_promptCancel: Boolean) {
-        _tripState.update { currentState ->
+        _uiState.update { currentState ->
             currentState.copy(
                 promptCancel = _promptCancel
             )
@@ -137,7 +140,7 @@ class TripViewModel(
     }
 
     fun updateTripActive(_tripActive: Boolean) {
-        _tripState.update { currentState ->
+        _uiState.update { currentState ->
             currentState.copy(
                 tripActive = _tripActive
             )

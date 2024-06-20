@@ -8,11 +8,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.busappics4u.BusViewModel
+import com.example.busappics4u.data.TripsRepository
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -21,11 +20,12 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun TripDetailScreen(
-    busViewModel: BusViewModel,
+    tripsRepository: TripsRepository,
     tripId: Int,
-    viewModel: TripDetailViewModel = TripDetailViewModel(busViewModel, tripId)
+    uiState: TripDetailState
+//    viewModel: TripDetailViewModel = TripDetailViewModel(tripsRepository, tripId)
 ) {
-    val uiState = viewModel.uiState.collectAsState()
+//    val uiState = viewModel.uiState.collectAsState().value
 
     val dtf = DateTimeFormatter.ofPattern("EEE MMM dd, uu 'at' hh:mm a")
 
@@ -41,20 +41,20 @@ fun TripDetailScreen(
     ) {
         TripDetail (
             "Bus ID:",
-            uiState.value.trip.busId.toString()
+            uiState.trip.busId.toString()
         )
         TripDetail (
             "Route ID:",
-            uiState.value.trip.routeId.toString()
+            uiState.trip.routeId.toString()
         )
         TripDetail (
             "Route Headsign:",
-            uiState.value.trip.routeHeadsign
+            uiState.trip.routeHeadsign
         )
         TripDetail(
             "Trip Start:",
              LocalDateTime.ofEpochSecond(
-                 uiState.value.trip.startTime,
+                 uiState.trip.startTime,
                  0,
                  currentOffsetForMyZone
                  )

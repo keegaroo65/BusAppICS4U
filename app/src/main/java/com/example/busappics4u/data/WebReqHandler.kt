@@ -101,7 +101,7 @@ class WebReqHandler {
         @Throws(Exception::class)
         fun test(
             id: String,
-            callback: (String) -> Unit
+            callback: (String, Int) -> Unit
         ) {
             GlobalScope.launch {
                 async {
@@ -140,7 +140,7 @@ class WebReqHandler {
 
                     if (tripId == "") {
                         Log.d(TAG, "Bus $id was not found :(")
-                        callback("Bus was not found")
+                        callback("Bus was not found", 0)
 
                         if (entity != GtfsRealtime.FeedEntity.getDefaultInstance()) {
                             Log.d(TAG, entity.toString())
@@ -153,7 +153,7 @@ class WebReqHandler {
                     Log.d(TAG, "tripId $tripId")
                     //val tripInfo = getTripInfo(tripId)
 
-                    callback("This bus is running route $routeId")
+                    callback("This bus is running route", routeId.toInt())
 
                     /*if (!tripInfo.has("route_id")) {
                         callback("Server error $tripInfo")

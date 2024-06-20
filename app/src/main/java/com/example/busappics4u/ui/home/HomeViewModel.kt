@@ -21,16 +21,21 @@ class HomeViewModel(
         }
     }
 
-    fun output(text: String) {
+    fun output(
+        text: String,
+        routeId: Int = 0
+    ) {
         _uiState.update { currentState ->
             currentState.copy(
-                outputText = text
+                outputText = text,
+                routeId = routeId
             )
         }
     }
 }
 
 data class HomeUiState(
-    public val inputText: String = "",
-    public val outputText: String = "trip info here"
+    val inputText: String = "",
+    val outputText: String = "trip info here",
+    val routeId: Int = 0
 )

@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.stateIn
 class HistoryViewModel(
     busViewModel: BusViewModel
 ) : ViewModel() {
-    val historyUiState: StateFlow<HistoryUiState> =
+    val uiState: StateFlow<HistoryUiState> =
         busViewModel.mainActivity.container.tripsRepository.getAllTripsStream()
             .map { HistoryUiState(it) }
             .stateIn(
