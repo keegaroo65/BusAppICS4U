@@ -40,7 +40,10 @@ fun BusNavGraph(
         composable(
             route = NAV_HOME
         ) {
-            HomeScreen(busViewModel)
+            HomeScreen(
+                busViewModel,
+                innerPadding
+            )
         }
 
         composable(

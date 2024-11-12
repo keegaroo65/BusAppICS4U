@@ -22,6 +22,14 @@ class HomeViewModel(
         }
     }
 
+    fun hideOutput() {
+        _uiState.update { currentState ->
+            currentState.copy(
+                outputText = ""
+            )
+        }
+    }
+
     fun setSearchType(searchType: Int) {
         _uiState.update { currentState ->
             currentState.copy(
@@ -90,6 +98,6 @@ data class HomeUiState(
     val busList: List<GtfsRealtime.FeedEntity>? = null,
     val inputText1: String = "",
     val inputText2: String = "",
-    val outputText: String = "trip info here",
+    val outputText: String = "",
     val routeId: Int = 0
 )

@@ -1,12 +1,16 @@
 package com.example.busappics4u.ui.home
 
 import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -53,7 +57,8 @@ private const val TAG = "HomeScreen"
 
 @Composable
 fun HomeScreen(
-    busViewModel: BusViewModel
+    busViewModel: BusViewModel,
+    innerPadding: PaddingValues
 ) {
     val busState = busViewModel.appState.collectAsState().value
     val viewModel = busState.homeViewModel
@@ -66,7 +71,14 @@ fun HomeScreen(
             .fillMaxSize()
             .padding(7.dp)
     ) {
-        HomePinger(busViewModel, busState, viewModel, uiState, focusManager)
+        HomePinger(
+            busViewModel,
+            busState,
+            viewModel,
+            uiState,
+            focusManager,
+            innerPadding
+        )
     }
 }
 
@@ -77,23 +89,36 @@ val typeOptions = listOf(
     Icons.Outlined.Bolt
 )
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomePinger(
     busViewModel: BusViewModel,
     busState: BusUiState,
     viewModel: HomeViewModel,
     uiState: HomeUiState,
-    focusManager: FocusManager
+    focusManager: FocusManager,
+    innerPadding: PaddingValues
 ) {
+//    val viewReq = remember { BringIntoViewRequester() }
+//    val coroutineScope = rememberCoroutineScope()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .consumeWindowInsets(innerPadding)
+            .imePadding()
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            if (uiState.showingBusList) {
+            if (uiState.outputText.isNotEmpty()) {
+                BusPopup(
+                    viewModel,
+                    uiState
+                )
+            }
+            else if (uiState.showingBusList) {
                 BusListPopup(
                     viewModel,
                     uiState,
@@ -190,23 +215,31 @@ fun HomePinger(
                     }
                 }
 
+//                Spacer(Modifier.weight(1f))
 
                 Button(
                     modifier = Modifier
                         .padding(20.dp),
+//                        .statusBarsPadding()
+//                        .navigationBarsPadding()
+//                        .imePadding(),
                     onClick = {
-                        viewModel.output("loading...")
+//                        viewModel.output("loading...")
 
                         focusManager.clearFocus()
 
                         when(uiState.busSearchType) {
-                            0 -> WebReqHandler.SearchSingleBus(
-                                uiState.inputText1
-                            ) { outputText, routeId ->
-                                viewModel.output(
-                                    outputText,
-                                    routeId
-                                )
+                            0 -> {
+                                viewModel.output("loading...")
+
+                                WebReqHandler.SearchSingleBus(
+                                    uiState.inputText1
+                                ) { outputText, routeId ->
+                                    viewModel.output(
+                                        outputText,
+                                        routeId
+                                    )
+                                }
                             }
                             1 -> {
                                 viewModel.showBusList()
@@ -277,6 +310,45 @@ fun HomePinger(
     }
 }
 
+@Composable
+fun BusPopup(
+    viewModel: HomeViewModel,
+    uiState: HomeUiState
+) {
+    Dialog(
+        onDismissRequest = {
+            viewModel.hideOutput()
+        }
+    ) {
+        val isLoading = uiState.outputText == "loading..."
+
+        var _cardModifier = Modifier.padding(15.dp)
+
+        if (!isLoading)
+            _cardModifier = _cardModifier.fillMaxWidth()
+
+        Card(
+            modifier = _cardModifier
+        ) {
+            if (isLoading)
+                CircularProgressIndicator(
+                    modifier = Modifier.padding(10.dp)
+                )
+            else
+                Row (
+                    modifier = Modifier.padding(10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = uiState.outputText
+                    )
+                    if (uiState.routeId != 0) {
+                        RouteIdIcon(uiState.routeId)
+                    }
+                }
+        }
+    }
+}
 
 @Composable
 fun BusListPopup(
@@ -356,5 +428,5 @@ fun isValidRoute(routeId: String): Boolean {
 @Preview
 @Composable
 fun HsPreview() {
-    HomeScreen(BusViewModel(MainActivity(), rememberNavController()))
+    HomeScreen(BusViewModel(MainActivity(), rememberNavController()), PaddingValues())
 }

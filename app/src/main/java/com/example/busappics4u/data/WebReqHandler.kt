@@ -176,17 +176,19 @@ class WebReqHandler {
             maxText: String,
             callback: (String, List<GtfsRealtime.FeedEntity>) -> Unit
         ) {
-            val min = minText.toIntOrNull() ?: -1
-            val max = maxText.toIntOrNull() ?: -1
-
-            if (min == -1) {
-                callback("Invalid minimum id", listOf())
-                return
-            }
-            if (max == -1) {
-                callback("Invalid maximum id", listOf())
-                return
-            }
+//            val min = minText.toIntOrNull() ?: -1
+//            val max = maxText.toIntOrNull() ?: -1
+//
+//            if (min == -1) {
+//                callback("Invalid minimum id", listOf())
+//                return
+//            }
+//            if (max == -1) {
+//                callback("Invalid maximum id", listOf())
+//                return
+//            }
+            val min = minText.toIntOrNull() ?: 0
+            val max = maxText.toIntOrNull() ?: 10000
 
             UpdateRTFeed({ // Ping the realtime feed if it's been 30 or more seconds since the last ping
                 if (lastRTFeed == null) return@UpdateRTFeed // If there is no feed data present, return empty
