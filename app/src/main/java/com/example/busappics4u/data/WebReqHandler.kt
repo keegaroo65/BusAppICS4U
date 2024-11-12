@@ -2,6 +2,7 @@ package com.example.busappics4u.data
 
 import android.util.Log
 import com.example.busappics4u.BuildConfig
+import com.example.busappics4u.utility.Utility
 import com.google.transit.realtime.GtfsRealtime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -26,6 +27,9 @@ class WebReqHandler {
         const val GTFS_REALTIME_URL = "https://nextrip-public-api.azure-api.net/octranspo/gtfs-rt-vp/beta/v1/VehiclePositions"
 
 //        const val GTFS_STATIC_URL = "https://oct-gtfs-emasagcnfmcgeham.z01.azurefd.net/public-access/GTFSExport.zip"
+
+        var lastRTPing = 0L
+        var lastRTFeed: GtfsRealtime.FeedMessage? = null
 
         suspend fun downloadFile(url: String, outputFile: File): Boolean {
             try {
@@ -99,12 +103,16 @@ class WebReqHandler {
         }
 
         @Throws(Exception::class)
-        fun test(
-            id: String,
-            callback: (String, Int) -> Unit
-        ) {
+        fun UpdateRTFeed(callback: () -> Unit) {
+            val now = Utility.time();
+            if (now < lastRTPing + 30L) {
+                return // Don't ping more often than every 30 seconds
+            }
+
             GlobalScope.launch {
                 async {
+                    lastRTPing = Utility.time()
+
                     val url = URL(GTFS_REALTIME_URL)
 
                     val conn = url.openConnection() as HttpURLConnection
@@ -118,52 +126,115 @@ class WebReqHandler {
                         BuildConfig.ocKey
                     )
 
-                    val feed = GtfsRealtime.FeedMessage.parseFrom(conn.inputStream)
-                    //Log.d(TAG, feed.toString())
+                    lastRTFeed = GtfsRealtime.FeedMessage.parseFrom(conn.inputStream)
 
-                    var routeId: String = ""
-                    var tripId: String = ""
-                    var entity: GtfsRealtime.FeedEntity =
-                        GtfsRealtime.FeedEntity.getDefaultInstance()
-
-                    for (_entity in feed.entityList) {
-                        if (_entity.hasVehicle()) {
-                            if (_entity.vehicle.vehicle.id == id) {
-                                routeId = _entity.vehicle.trip.routeId
-                                tripId = _entity.vehicle.trip.tripId
-                                entity = _entity
-                            //"${entity.vehicle.trip.routeId} (${entity.vehicle.trip.tripId})"
-                                //Log.d(TAG,"$id is currently running route $result")
-                            }
-                        }
-                    }
-
-                    if (tripId == "") {
-                        Log.d(TAG, "Bus $id was not found :(")
-                        callback("Bus was not found", 0)
-
-                        if (entity != GtfsRealtime.FeedEntity.getDefaultInstance()) {
-                            Log.d(TAG, entity.toString())
-                        }
-
-                        return@async
-                    }
-
-                    Log.d(TAG, "routeId $routeId")
-                    Log.d(TAG, "tripId $tripId")
-                    //val tripInfo = getTripInfo(tripId)
-
-                    callback("This bus is running route", routeId.toInt())
-
-                    /*if (!tripInfo.has("route_id")) {
-                        callback("Server error $tripInfo")
-                        return@async
-                    }
-
-                    callback("${tripInfo.get("route_id")} ${tripInfo.get("trip_headsign")}")*/
-//                    callback(tripId)
+                    callback() // Tells the callback this has finished loading the lastRTFeed variable
                 }
             }
+        }
+
+        @Throws(Exception::class)
+        fun SearchSingleBus(
+            id: String,
+            callback: (String, Int) -> Unit
+        ) {
+            UpdateRTFeed({ // Ping the realtime feed if it's been 30 or more seconds since the last ping
+                if (lastRTFeed == null) return@UpdateRTFeed; // If there is no feed data present, return empty
+
+                var routeId = ""
+                var tripId = ""
+                var entity: GtfsRealtime.FeedEntity = GtfsRealtime.FeedEntity.getDefaultInstance()
+
+                for (_entity in lastRTFeed!!.entityList) {
+                    if (_entity.hasVehicle()) {
+                        if (_entity.vehicle.vehicle.id == id) {
+                            routeId = _entity.vehicle.trip.routeId
+                            tripId = _entity.vehicle.trip.tripId
+                            entity = _entity
+                        }
+                    }
+                }
+
+                if (tripId == "") {
+                    Log.d(TAG, "Bus $id was not found :(")
+                    callback("Bus was not found", 0)
+
+                    if (entity != GtfsRealtime.FeedEntity.getDefaultInstance()) {
+                        Log.d(TAG, entity.toString())
+                    }
+
+                    return@UpdateRTFeed
+                }
+
+                callback("This bus is running route", routeId.toInt())
+            })
+        }
+
+        @Throws(Exception::class)
+        fun SearchBusRange(
+            minText: String,
+            maxText: String,
+            callback: (String, List<GtfsRealtime.FeedEntity>) -> Unit
+        ) {
+            val min = minText.toIntOrNull() ?: -1
+            val max = maxText.toIntOrNull() ?: -1
+
+            if (min == -1) {
+                callback("Invalid minimum id", listOf())
+                return
+            }
+            if (max == -1) {
+                callback("Invalid maximum id", listOf())
+                return
+            }
+
+            UpdateRTFeed({ // Ping the realtime feed if it's been 30 or more seconds since the last ping
+                if (lastRTFeed == null) return@UpdateRTFeed // If there is no feed data present, return empty
+
+                var busList: List<GtfsRealtime.FeedEntity> = mutableListOf()
+
+                for (entity in lastRTFeed!!.entityList) {
+                    if (entity.hasVehicle()) {
+                        val id = entity.vehicle.vehicle.id.toIntOrNull() ?: -1
+
+                        if (id in min..max) {
+                            busList = busList.plus(entity)
+                        }
+                    }
+                }
+
+                callback("", busList)
+            })
+        }
+
+        @Throws(Exception::class)
+        fun SearchZEBs(
+            callback: (List<GtfsRealtime.FeedEntity>) -> Unit
+        ) {
+            UpdateRTFeed({ // Ping the realtime feed if it's been 30 or more seconds since the last ping
+                if (lastRTFeed == null) return@UpdateRTFeed // If there is no feed data present, return empty
+
+                var zebList: List<GtfsRealtime.FeedEntity> = mutableListOf()
+
+                for (entity in lastRTFeed!!.entityList) {
+                    if (entity.hasVehicle()) {
+                        if (isZebId(entity.vehicle.vehicle.id)) {
+                            zebList = zebList.plus(entity)
+                        }
+                    }
+                }
+
+                callback(zebList)
+            })
+        }
+
+        fun isZebId(idText: String): Boolean {
+            val id = idText.toIntOrNull() ?: 0
+
+            Log.d(TAG, "bus $id is ${id >= 8110}")
+
+//            return id >= 8110
+            return id in 2100..2599
         }
     }
 }

@@ -11,10 +11,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class BusViewModel(
-    _mainActivity: MainActivity,
-    _navController: NavHostController
+    val mainActivity: MainActivity,
+    val navController: NavHostController
 ) : ViewModel() {
-    val mainActivity = _mainActivity
 
     private val _appState = MutableStateFlow(
         BusUiState(
@@ -27,8 +26,6 @@ class BusViewModel(
         )
     )
     val appState = _appState.asStateFlow()
-
-    val navController = _navController
 
     fun trip() {
         if (!_appState.value.tripViewModel.uiState.value.tripActive) {

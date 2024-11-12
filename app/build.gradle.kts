@@ -1,7 +1,8 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
-val mapboxKey: String = gradleLocalProperties(rootDir).getProperty("mapboxKey")
-val ocKey: String = gradleLocalProperties(rootDir).getProperty("ocKey")
+val localProperties = gradleLocalProperties(rootDir, providers)
+val mapboxKey: String = localProperties.getProperty("mapboxKey")
+val ocKey: String = localProperties.getProperty("ocKey")
 
 plugins {
     id("com.android.application")
@@ -9,8 +10,7 @@ plugins {
     id("com.google.devtools.ksp") version "1.9.20-1.0.14"
 }
 
-android {
-    namespace = "com.example.busappics4u"
+android {    namespace = "com.example.busappics4u"
     compileSdk = 34
 
     defaultConfig {
@@ -44,11 +44,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     buildFeatures {
         compose = true
@@ -73,9 +73,10 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
+//    implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation(libs.material3.android)
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))

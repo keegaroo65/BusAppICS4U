@@ -15,4 +15,8 @@ object ServiceTypeColors {
     val Frequent = Color(0xFFEF5323)
     val Connexion = Color(0xFFB36A94)
     val Local = Color(0xFF6D6E70)
+    val R1 = Color(0xFFD62E3B)
+    val R2 = Color(0xFF76BF43)
+    val R3 = Color(0xFF8F7200)
+    val R4 = Color(0xFF0980A5)
 }

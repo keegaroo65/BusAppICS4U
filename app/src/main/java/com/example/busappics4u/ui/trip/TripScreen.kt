@@ -25,6 +25,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.busappics4u.BusViewModel
 import kotlinx.coroutines.launch
+import org.w3c.dom.Text
 
 @Composable
 fun TripScreen(
@@ -178,7 +179,10 @@ fun AbortConfirmationDialog(
     modifier: Modifier = Modifier
 ) {
     AlertDialog(
-        onDismissRequest = {},
+        onDismissRequest = {
+            viewModel.updatePromptCancel(false)
+            onAbortCancel()
+        },
         title = {
             Text("Confirm")
         },

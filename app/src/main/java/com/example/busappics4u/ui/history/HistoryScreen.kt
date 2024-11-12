@@ -82,24 +82,32 @@ fun RouteIdIcon(
         modifier = Modifier
             .padding(5.dp + extraPadding)
             .drawBehind {
+                val borderSize = Utility.MinAspectRatio(this.size.copy(
+                    width = this.size.width + extraPx,
+                    height = this.size.height + extraPx
+                ), 1f)
+                val widthDiff = this.size.width + extraPx - borderSize.width
                 drawRoundRect(
                     color = Utility.ServiceColor(routeId.toInt()),
                     cornerRadius = CornerRadius(extraPx * 0.75F, extraPx * 0.75F),
-                    size = this.size.copy(
-                        width = this.size.width + extraPx,
-                        height = this.size.height + extraPx
-                    ),
-                    topLeft = Offset(-extraPx / 2F, -extraPx / 2F)
+                    size = borderSize,
+                    topLeft = Offset(-(extraPx - widthDiff) / 2F, -extraPx / 2F)
                     //radius = this.size.maxDimension
                 )
                 if (Utility.limited.contains(routeId.toInt())) {
                     drawRoundRect(
                         color = limitedColor,
-                        cornerRadius = CornerRadius(extraPx * 0.5F, extraPx * 0.5F)
+                        cornerRadius = CornerRadius(extraPx * 0.5F, extraPx * 0.5F),
+                        size = Utility.MinAspectRatio(this.size, 1f),
+                        topLeft = Offset(widthDiff / 2f, 0f)
                     )
                 }
             },
-        text = routeId
+        text =
+            if (routeId.toInt() > 4)
+                routeId
+            else
+                "R$routeId"
     )
 }
 
