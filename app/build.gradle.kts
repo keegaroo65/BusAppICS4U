@@ -57,9 +57,20 @@ configure<com.android.build.api.dsl.ApplicationExtension> {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    sourceSets {
+        getByName("debug") {
+            kotlin.directories.add("build/generated/ksp/debug/kotlin")
+        }
+        getByName("release") {
+            kotlin.directories.add("build/generated/ksp/release/kotlin")
+        }
+    }
 }
 
 dependencies {
+    // Kotlin
+
     // Android dependencies
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
