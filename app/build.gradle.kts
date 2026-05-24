@@ -6,13 +6,13 @@ val ocKey: String = localProperties.getProperty("ocKey")
 
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp") version "2.3.2"
     alias(libs.plugins.kotlin.compose)
 }
 
-android {    namespace = "com.example.busappics4u"
-    compileSdk = 34
+configure<com.android.build.api.dsl.ApplicationExtension> {
+    namespace = "com.example.busappics4u"
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.example.busappics4u"
@@ -47,9 +47,6 @@ android {    namespace = "com.example.busappics4u"
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
     }
     buildFeatures {
         compose = true
