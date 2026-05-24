@@ -17,6 +17,7 @@ roomCompiler = "2.8.4"
 roomRuntime = "2.8.4"
 sqldelight = "2.3.2"
 material3Android = "1.4.0"
+kotlinVersion = "2.3.21"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityComposeVersion" }
@@ -83,6 +84,7 @@ sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 publishing = { id = "com.vanniktech.maven.publish", version = "0.36.0" }
 spotless = { id = "com.diffplug.spotless", version = "8.5.1" }
 wire = { id = "com.squareup.wire", version = "6.4.0" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlinVersion" }
 
 [bundles]
 kotlin-scripting = ["kotlin-scripting-common", "kotlin-scripting-jvm", "kotlin-scripting-jvmHost", "kotlin-scripting-dependencies-core", "kotlin-scripting-dependencies-maven"]

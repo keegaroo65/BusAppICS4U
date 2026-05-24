@@ -7,7 +7,8 @@ val ocKey: String = localProperties.getProperty("ocKey")
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("com.google.devtools.ksp") version "1.9.20-1.0.14"
+    id("com.google.devtools.ksp") version "2.3.2"
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {    namespace = "com.example.busappics4u"
@@ -53,9 +54,6 @@ android {    namespace = "com.example.busappics4u"
     buildFeatures {
         compose = true
         buildConfig = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
