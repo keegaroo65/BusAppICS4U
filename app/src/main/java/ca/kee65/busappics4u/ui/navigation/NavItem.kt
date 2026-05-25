@@ -9,7 +9,7 @@ import androidx.compose.material.icons.outlined.Analytics
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.kee65.busappics4u.R
+import ca.kee65.busappics4u.R
 
 sealed class NavItem(
     @StringRes val title: Int,

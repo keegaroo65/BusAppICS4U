@@ -26,21 +26,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.busappics4u.data.AppContainer
-import com.example.busappics4u.data.AppDataContainer
-import com.example.busappics4u.data.FileHandler
-import com.example.busappics4u.ui.navigation.BusNavGraph
-import com.example.busappics4u.ui.navigation.NavItem
-import com.example.busappics4u.ui.theme.BusAppICS4UTheme
 import ca.kee65.busappics4u.data.AppContainer
 import ca.kee65.busappics4u.data.AppDataContainer
 import ca.kee65.busappics4u.data.FileHandler
 import ca.kee65.busappics4u.ui.navigation.BusNavGraph
 import ca.kee65.busappics4u.ui.navigation.NavItem
 import ca.kee65.busappics4u.ui.theme.BusAppICS4UTheme
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
 
 class MainActivity : ComponentActivity() {
     lateinit var container: AppContainer
+    lateinit var firebaseAnalytics: FirebaseAnalytics
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +49,9 @@ class MainActivity : ComponentActivity() {
         container = AppDataContainer(context)
 
         FileHandler.load(context)
+
+        // Obtain the FirebaseAnalytics instance.
+        firebaseAnalytics = Firebase.analytics
 
         setContent {
             BusAppICS4UTheme {

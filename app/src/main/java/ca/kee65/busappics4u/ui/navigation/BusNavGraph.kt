@@ -10,7 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import ca.kee65.busappics4u.BusViewModel
-import com.kee65.busappics4u.R
+import ca.kee65.busappics4u.R
 import ca.kee65.busappics4u.ui.history.HistoryScreen
 import ca.kee65.busappics4u.ui.home.HomeScreen
 import ca.kee65.busappics4u.ui.settings.SettingsScreen

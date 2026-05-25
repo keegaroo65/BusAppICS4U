@@ -8,10 +8,11 @@ plugins {
     id("com.android.application")
     id("com.google.devtools.ksp") version "2.3.2"
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.services)
 }
 
 configure<com.android.build.api.dsl.ApplicationExtension> {
-    namespace = "com.kee65.busappics4u"
+    namespace = "ca.kee65.busappics4u"
     compileSdk = 37
 
     defaultConfig {

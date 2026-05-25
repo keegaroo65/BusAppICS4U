@@ -85,6 +85,7 @@ publishing = { id = "com.vanniktech.maven.publish", version = "0.36.0" }
 spotless = { id = "com.diffplug.spotless", version = "8.5.1" }
 wire = { id = "com.squareup.wire", version = "6.4.0" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlinVersion" }
+google-services = { id = "com.google.gms.google-services", version = "4.4.4" }
 
 [bundles]
 kotlin-scripting = ["kotlin-scripting-common", "kotlin-scripting-jvm", "kotlin-scripting-jvmHost", "kotlin-scripting-dependencies-core", "kotlin-scripting-dependencies-maven"]
