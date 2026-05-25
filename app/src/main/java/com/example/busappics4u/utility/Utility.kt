@@ -10,18 +10,16 @@ class Utility {
             return System.currentTimeMillis()
         }
 
-        val frequents = listOf(6, 7, 10, 11, 12, 14, 15, 25, 40, 44, 51, 53, 80, 85, 87, 88, 90, 111)
-        val rapids = listOf(39, 45, 57, 61, 62, 63, 74, 75, 97, 98, 99)
-        val limited = listOf(15, 21, 23, 27, 31, 32, 33, 47, 66, 67, 73, 82, 93, 96, 110, 153, 158, 161, 162, 164, 165, 173, 176, 186, 187, 190, 198, 199, 301, 302, 303, 304, 305)
+        val frequents = listOf(6, 7, 10, 11, 12, 14, 25, 39, 40, 41, 44, 45, 57, 61, 62, 63, 68,
+            74, 75, 80, 85, 87, 88, 90, 97, 98, 99, 111)
+        val limited = listOf(13, 15, 21, 23, 26, 32, 33, 43, 47, 60, 66, 67, 73, 82, 84, 92, 117,
+            187, 198)
 
         fun ServiceColor(routeId: Int): Color { // TODO: clean up the if statements
             if (frequents.contains(routeId)) {
                 return ServiceTypeColors.Frequent
             }
-            else if (rapids.contains(routeId)) {
-                return ServiceTypeColors.Rapid
-            }
-            else if (routeId >= 200 && routeId <= 299) {
+            else if (routeId in 200..299) {
                 return ServiceTypeColors.Connexion
             }
             else if (routeId == 1) {
@@ -37,6 +35,12 @@ class Utility {
                 return ServiceTypeColors.R4
             }
             return ServiceTypeColors.Local
+        }
+
+        fun IsRouteLimited(routeId: Int): Boolean {
+            return limited.contains(routeId)        // For local routes that are limited
+                    || routeId in 600..699    // For school routes (always limited)
+                    || routeId in 300..499    // For shopper & event routes (always limited)
         }
 
         // Ratio expressed as a Float value representing X / Y eg. 3:2 (landscape) is 3/2=1.5f

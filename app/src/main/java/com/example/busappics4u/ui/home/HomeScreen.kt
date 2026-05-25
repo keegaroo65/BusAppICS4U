@@ -24,9 +24,11 @@ import androidx.compose.material.icons.outlined.DirectionsBus
 import androidx.compose.material.icons.outlined.FormatListNumbered
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFloatingActionButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -38,6 +40,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -343,7 +346,10 @@ fun BusPopup(
                         text = uiState.outputText
                     )
                     if (uiState.routeId != 0) {
-                        RouteIdIcon(uiState.routeId)
+                        RouteIdIcon(
+                            uiState.routeId,
+                            backgroundColor = LocalContentColor.current
+                        )
                     }
                 }
         }
@@ -394,7 +400,7 @@ fun BusListPopup(
                         ) {
                             Log.d(TAG, "num buses for dialog: ${uiState.busList!!.size}")
                             uiState.busList.forEachIndexed { index, bus ->
-                                BusListCard(index, bus)
+                                BusListCard(index, bus, CardDefaults.cardColors().containerColor)
                             }
                         }
                     }
@@ -406,7 +412,7 @@ fun BusListPopup(
 
 
 @Composable
-fun BusListCard(index: Int, bus: GtfsRealtime.FeedEntity) {
+fun BusListCard(index: Int, bus: GtfsRealtime.FeedEntity, backgroundColor: Color) {
     val routeId = bus.vehicle.trip.routeId
 
     if (isValidRoute(routeId)) {
@@ -414,7 +420,7 @@ fun BusListCard(index: Int, bus: GtfsRealtime.FeedEntity) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text("Bus #${bus.vehicle.vehicle.id} on route")
-            RouteIdIcon(routeId)
+            RouteIdIcon(routeId, backgroundColor = backgroundColor)
         }
     }
     else
@@ -425,8 +431,8 @@ fun isValidRoute(routeId: String): Boolean {
     return routeId.toIntOrNull() != null
 }
 
-@Preview
-@Composable
-fun HsPreview() {
-    HomeScreen(BusViewModel(MainActivity(), rememberNavController()), PaddingValues())
-}
+//@Preview
+//@Composable
+//fun HsPreview() {
+//    HomeScreen(BusViewModel(MainActivity(), rememberNavController()), PaddingValues())
+//}
