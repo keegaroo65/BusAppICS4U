@@ -80,7 +80,7 @@ fun BusApp(
                 ),
                 title = {
                     Text(
-                        text = "Bus Tool <3",
+                        text = "Bus Tool v${BuildConfig.VERSION_NAME} <3",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center,

@@ -132,15 +132,20 @@ fun HomePinger(
             Column (
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(0.dp, 0.dp, 0.dp, 55.dp),
+                    .padding(4.dp, 4.dp, 4.dp, 55.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {// Title text
                 Text(
 //                        modifier = Modifier
 //                            .align(Alignment.TopCenter),
-                    text = "Bus app!",
-                    style = MaterialTheme.typography.displayLarge
+                    text = "OC Transpo Search",
+                    style = MaterialTheme.typography.displayMedium
+                )
+
+                Text(
+                    text = "Search for buses currently available for tracking in Ottawa, some may" +
+                            " be in the garage or otherwise unavailable."
                 )
 
                 // Segmented button to pick between 4 transaction types
@@ -364,16 +369,11 @@ fun BusListPopup(
             viewModel.hideBusList()
         }
     ) {
-        var _cardModifier = Modifier.padding(15.dp)
-
-        if (uiState.busList != null)
-            _cardModifier = _cardModifier.fillMaxWidth()
-
         Card(
-            modifier = _cardModifier
+//            modifier =
         ) {
             Column(
-                modifier = if (uiState.busList != null) Modifier.fillMaxWidth() else Modifier,
+                modifier = Modifier.padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 uiState.busList.let {
@@ -391,7 +391,7 @@ fun BusListPopup(
                         Column(
                             modifier = Modifier
                                 .padding(5.dp)
-                                .fillMaxWidth()
+                                //.fillMaxWidth()
                                 .verticalScroll(rememberScrollState()),
                             verticalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
@@ -416,7 +416,8 @@ fun BusListCard(index: Int, bus: GtfsRealtime.FeedEntity, backgroundColor: Color
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Bus #${bus.vehicle.vehicle.id} on route")
+            Text("Bus #${bus.vehicle.vehicle.id} on route"
+                + " ".repeat(if (routeId.toInt() < 10) 1 else 0))
             RouteIdIcon(routeId, backgroundColor = backgroundColor)
         }
     }
