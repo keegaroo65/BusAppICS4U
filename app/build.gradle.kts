@@ -11,11 +11,11 @@ plugins {
 }
 
 configure<com.android.build.api.dsl.ApplicationExtension> {
-    namespace = "com.example.busappics4u"
+    namespace = "com.kee65.busappics4u"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.example.busappics4u"
+        applicationId = "ca.kee65.busappics4u"
         minSdk = 29
         targetSdk = 34
         versionCode = 1
